@@ -21,11 +21,20 @@ export default function ExpenseTracker() {
 
   const categories = ["Groceries", "Rent", "Transport", "Entertainment", "Utilities", "Other"];
 
+  const tips = [
+    "Track your expenses daily.",
+    "Save at least 20% of your income.",
+    "Avoid unnecessary subscriptions.",
+    "Use cash instead of credit for small expenses.",
+    "Plan your meals to reduce food waste.",
+    "Compare prices before making big purchases."
+  ];
+
   useEffect(() => {
-    fetch("https://api.example.com/saving-tips") // Replace with actual AI API
-      .then((res) => res.json())
-      .then((data) => setSavingTip(data.tip))
-      .catch(() => setSavingTip("Consider setting a monthly budget to track expenses efficiently."));
+    const tipInterval = setInterval(() => {
+      setSavingTip(tips[Math.floor(Math.random() * tips.length)]);
+    }, 5000);
+    return () => clearInterval(tipInterval);
   }, []);
 
   const addExpense = () => {
@@ -76,31 +85,7 @@ export default function ExpenseTracker() {
         </CardContent>
       </Card>
       
-      <div className="mb-4">
-        <h2 className="font-semibold mb-2">Expense List:</h2>
-        <div className="max-h-40 overflow-y-auto border p-2 rounded-md">
-          <ul className="list-disc pl-5">
-            {expenses.slice(-5).map((exp, idx) => (
-              <li key={idx} className="py-1 border-b last:border-b-0">{exp.category}: ₹{exp.amount}</li>
-            ))}
-          </ul>
-        </div>
-      </div>
-      
-      <div className="mb-4">
-        <h2 className="font-semibold mb-2">Expense Breakdown:</h2>
-        <PieChart width={300} height={300}>
-          <Pie data={expenseData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={100} fill="#8884d8" label>
-            {expenseData.map((entry, index) => (
-              <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-            ))}
-          </Pie>
-          <Tooltip />
-          <Legend />
-        </PieChart>
-      </div>
-      
-      <div className="flex justify-end mb-4">
+      <div className="mb-4 flex justify-end">
         <Dialog>
           <DialogTrigger>
             <Button variant="outline" className="rounded-full p-3 text-white bg-black border-black">
@@ -138,6 +123,30 @@ export default function ExpenseTracker() {
             <Button onClick={addExpense} className="w-full">Add Expense</Button>
           </DialogContent>
         </Dialog>
+      </div>
+      
+      <div className="mb-4">
+        <h2 className="font-semibold mb-2">Expense Breakdown:</h2>
+        <PieChart width={300} height={300}>
+          <Pie data={expenseData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={100} fill="#8884d8" label>
+            {expenseData.map((entry, index) => (
+              <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+            ))}
+          </Pie>
+          <Tooltip />
+          <Legend />
+        </PieChart>
+      </div>
+
+      <div className="mb-4">
+        <h2 className="font-semibold mb-2">Expense List:</h2>
+        <div className="max-h-40 overflow-y-auto border p-2 rounded-md">
+          <ul className="list-disc pl-5">
+            {expenses.slice(-5).map((exp, idx) => (
+              <li key={idx} className="py-1 border-b last:border-b-0">{exp.category}: ₹{exp.amount}</li>
+            ))}
+          </ul>
+        </div>
       </div>
     </div>
   );
